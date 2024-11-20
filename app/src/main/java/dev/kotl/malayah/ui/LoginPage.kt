@@ -1,6 +1,5 @@
 package dev.kotl.malayah.ui
 
-import android.net.Credentials
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -34,9 +33,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import dev.kotl.malayah.LoggedUser
 import dev.kotl.malayah.R
 import dev.kotl.malayah.Routes
+import dev.kotl.malayah.users
 
 @Composable
 fun LoginPage(navController: NavController) {
@@ -176,10 +175,7 @@ fun SignUpNowButton(navController: NavController) {
 fun validateCredentials(credentials: LoginCredentials): Boolean {
     if (credentials.isEmpty())
         return false
-    return credentials.username.trim().equals(
-        "yukiro",
-        ignoreCase = true
-    ) && credentials.password.equals("123qweasd")
+    return users.validate(credentials.username, credentials.password)
 }
 
 data class LoginCredentials(

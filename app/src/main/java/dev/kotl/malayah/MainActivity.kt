@@ -15,6 +15,7 @@ class MainActivity : ComponentActivity() {
             AppTheme(
                 darkTheme = false
             ) {
+                users = Users()
                 AppController()
             }
         }

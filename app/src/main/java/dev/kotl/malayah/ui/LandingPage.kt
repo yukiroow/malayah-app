@@ -45,7 +45,7 @@ fun LandingPage(navController: NavController) {
             LoginButton(navController)
             Spacer(modifier = Modifier.height(10.dp))
             RegisterButton(navController)
-            GuestButton()
+            GuestButton(navController)
         }
     }
 }
@@ -86,9 +86,10 @@ fun RegisterButton(navController: NavController) {
 }
 
 @Composable
-fun GuestButton() {
+fun GuestButton(navController: NavController) {
+    val name = "Guest user"
     TextButton(
-        onClick = { /*TODO*/ },
+        onClick = { navController.navigate("chat/${name}") },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.secondary

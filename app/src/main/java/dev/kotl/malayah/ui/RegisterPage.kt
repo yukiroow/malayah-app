@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.kotl.malayah.R
 import dev.kotl.malayah.Routes
+import dev.kotl.malayah.User
+import dev.kotl.malayah.users
 
 @Composable
 fun RegisterPage(navController: NavController) {
@@ -42,6 +44,9 @@ fun RegisterPage(navController: NavController) {
             .padding(18.dp)
     ) {
         var username by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var confirmPassword by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
         Spacer(modifier = Modifier.height(32.dp))
         Image(
             painter = painterResource(id = R.drawable.home_banner),
@@ -63,13 +68,19 @@ fun RegisterPage(navController: NavController) {
                 username = newUsername
             })
             Spacer(modifier = Modifier.height(12.dp))
-            RegisterEmailField()
+            RegisterEmailField(email, onEmailChange = { newEmail ->
+                email = newEmail
+            })
             Spacer(modifier = Modifier.height(12.dp))
-            RegisterPasswordTextField()
+            RegisterPasswordTextField(password, onPasswordChange = { newPassword ->
+                password = newPassword
+            })
             Spacer(modifier = Modifier.height(12.dp))
-            RegisterConfirmPasswordTextField()
+            RegisterConfirmPasswordTextField(confirmPassword, onConfirmPasswordChange = { newConfirmPassword ->
+                confirmPassword = newConfirmPassword
+            })
             Spacer(modifier = Modifier.height(32.dp))
-            RegisterSubmitButton(navController, username)
+            RegisterSubmitButton(navController, username, password, email, confirmPassword)
             LoginNowButton(navController)
         }
     }
@@ -92,12 +103,10 @@ fun RegisterUsernameField(username: String, onUsernameChange: (String) -> Unit) 
 }
 
 @Composable
-fun RegisterEmailField() {
-    var text by remember { mutableStateOf("") }
-
+fun RegisterEmailField(email: String, onEmailChange: (String) -> Unit) {
     TextField(
-        value = text,
-        onValueChange = { text = it },
+        value = email,
+        onValueChange = onEmailChange,
         placeholder = { Text("Enter email") },
         label = { Text("Email") },
         modifier = Modifier.fillMaxWidth(),
@@ -110,18 +119,14 @@ fun RegisterEmailField() {
 }
 
 @Composable
-fun RegisterPasswordTextField() {
-    var password by remember { mutableStateOf("") }
-
+fun RegisterPasswordTextField(password: String, onPasswordChange: (String) -> Unit) {
     TextField(
         value = password,
-        onValueChange = {
-            password = it
-        },
+        onValueChange = onPasswordChange,
         placeholder = { Text(text = "Enter password") },
         label = { Text(text = "Password") },
         modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.background,
             unfocusedContainerColor = MaterialTheme.colorScheme.background
@@ -131,18 +136,14 @@ fun RegisterPasswordTextField() {
 }
 
 @Composable
-fun RegisterConfirmPasswordTextField() {
-    var password by remember { mutableStateOf("") }
-
+fun RegisterConfirmPasswordTextField(confirmPassword: String, onConfirmPasswordChange: (String) -> Unit) {
     TextField(
-        value = password,
-        onValueChange = {
-            password = it
-        },
+        value = confirmPassword,
+        onValueChange = onConfirmPasswordChange,
         placeholder = { Text(text = "Re-enter your password") },
         label = { Text(text = "Confirm Password") },
         modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.background,
             unfocusedContainerColor = MaterialTheme.colorScheme.background
@@ -152,10 +153,45 @@ fun RegisterConfirmPasswordTextField() {
 }
 
 @Composable
-fun RegisterSubmitButton(navController: NavController, username: String) {
+fun RegisterSubmitButton(
+    navController: NavController,
+    username: String,
+    password: String,
+    email: String,
+    confirmPassword: String
+) {
+    var errorMessage by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
+    if (showError) {
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(
+                top = 8.dp,
+                bottom = 8.dp
+            )
+        )
+    }
     Button(
         onClick = {
-            navController.navigate("chat/${username}")
+            if(username.isEmpty() || password.isEmpty() || email.isEmpty() || confirmPassword.isEmpty()) {
+                errorMessage = "Please complete all the fields."
+                showError = true
+            } else if (password != confirmPassword) {
+                errorMessage = "Passwords do not match."
+                showError = true
+            } else {
+                showError = false
+                users.register(
+                    User(
+                        username = username,
+                        password = password,
+                        email = email
+                    )
+                )
+                navController.navigate("login")
+            }
         },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
