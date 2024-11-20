@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "dev.kotl.malayah"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "dev.kotl.malayah"
