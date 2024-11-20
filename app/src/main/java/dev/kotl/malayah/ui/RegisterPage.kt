@@ -34,13 +34,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import dev.kotl.malayah.R
 
 @Composable
-fun RegisterPage() {
+fun RegisterPage(navController: NavController) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(18.dp)
     ) {
         Spacer(modifier = Modifier.height(32.dp))
         Image(
@@ -55,7 +57,7 @@ fun RegisterPage() {
             modifier = Modifier
                 .fillMaxSize()
                 .clip(shape = RoundedCornerShape(20.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(24.dp)
         ) {
             Spacer(modifier = Modifier.height(32.dp))
@@ -67,8 +69,8 @@ fun RegisterPage() {
             Spacer(modifier = Modifier.height(12.dp))
             RegisterConfirmPasswordTextField()
             Spacer(modifier = Modifier.height(32.dp))
-            RegisterSubmitButton()
-            LoginNowButton()
+            RegisterSubmitButton(navController)
+            LoginNowButton(navController)
         }
     }
 }
@@ -85,8 +87,8 @@ fun RegisterUsernameField() {
         modifier = Modifier.fillMaxWidth(),
         textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background
         )
     )
 }
@@ -103,8 +105,8 @@ fun RegisterEmailField() {
         modifier = Modifier.fillMaxWidth(),
         textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background
         )
     )
 }
@@ -123,8 +125,8 @@ fun RegisterPasswordTextField() {
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password ),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background
         ),
         visualTransformation = PasswordVisualTransformation()
     )
@@ -144,15 +146,15 @@ fun RegisterConfirmPasswordTextField() {
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password ),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background
         ),
         visualTransformation = PasswordVisualTransformation()
     )
 }
 
 @Composable
-fun RegisterSubmitButton() {
+fun RegisterSubmitButton(navController: NavController) {
     Button(
         onClick = { /*TODO*/ },
         modifier = Modifier.fillMaxWidth(),
@@ -166,9 +168,9 @@ fun RegisterSubmitButton() {
 }
 
 @Composable
-fun LoginNowButton() {
+fun LoginNowButton(navController: NavController) {
     TextButton(
-        onClick = { /*TODO*/ },
+        onClick = { navController.navigate(Routes.Login.route) },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.secondary

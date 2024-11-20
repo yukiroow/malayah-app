@@ -20,12 +20,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import dev.kotl.malayah.R
 
+sealed class Routes(val route: String) {
+    object Landing : Routes("landing")
+    object Login : Routes("login")
+    object Register : Routes("register")
+}
+
 @Composable
-fun LandingPage() {
+fun LandingPage(navController: NavController) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -40,9 +46,9 @@ fun LandingPage() {
                 .width(330.dp)
                 .padding(16.dp)
         ) {
-            LoginButton()
+            LoginButton(navController)
             Spacer(modifier = Modifier.height(10.dp))
-            RegisterButton()
+            RegisterButton(navController)
             GuestButton()
         }
     }
@@ -60,9 +66,9 @@ fun MalayahBanner() {
 }
 
 @Composable
-fun LoginButton() {
+fun LoginButton(navController: NavController) {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = { navController.navigate(Routes.Login.route) },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.secondary,
@@ -74,9 +80,9 @@ fun LoginButton() {
 }
 
 @Composable
-fun RegisterButton() {
+fun RegisterButton(navController: NavController) {
     FilledTonalButton(
-        onClick = { /*TODO*/ },
+        onClick = { navController.navigate(Routes.Register.route) },
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(text = "Register")

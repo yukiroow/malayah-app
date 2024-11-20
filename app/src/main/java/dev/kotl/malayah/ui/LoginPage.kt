@@ -27,19 +27,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import dev.kotl.malayah.R
 
 @Composable
-fun LoginPage() {
+fun LoginPage(navController: NavController) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(18.dp)
     ) {
         Spacer(modifier = Modifier.height(32.dp))
         Image(
@@ -54,7 +55,7 @@ fun LoginPage() {
             modifier = Modifier
                 .fillMaxSize()
                 .clip(shape = RoundedCornerShape(20.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(24.dp)
         ) {
             Spacer(modifier = Modifier.height(32.dp))
@@ -63,8 +64,8 @@ fun LoginPage() {
             LoginPasswordTextField()
             Row( modifier = Modifier.align(Alignment.End) ) { ForgotPasswordButton() }
             Spacer(modifier = Modifier.height(64.dp))
-            LoginSubmitButton()
-            SignUpNowButton()
+            LoginSubmitButton(navController)
+            SignUpNowButton(navController)
         }
     }
 }
@@ -81,8 +82,8 @@ fun LoginUsernameField() {
         modifier = Modifier.fillMaxWidth(),
         textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background
         )
     )
 }
@@ -101,8 +102,8 @@ fun LoginPasswordTextField() {
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password ),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background
         ),
         visualTransformation = PasswordVisualTransformation()
     )
@@ -121,7 +122,7 @@ fun ForgotPasswordButton() {
 }
 
 @Composable
-fun LoginSubmitButton() {
+fun LoginSubmitButton(navController: NavController) {
     Button(
         onClick = { /*TODO*/ },
         modifier = Modifier.fillMaxWidth(),
@@ -135,9 +136,9 @@ fun LoginSubmitButton() {
 }
 
 @Composable
-fun SignUpNowButton() {
+fun SignUpNowButton(navController: NavController) {
     TextButton(
-        onClick = { /*TODO*/ },
+        onClick = { navController.navigate(Routes.Register.route) },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.secondary
