@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme(
-                darkTheme = true
+                darkTheme = false
             ) {
                 AppController()
             }
