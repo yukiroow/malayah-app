@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -36,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import dev.kotl.malayah.R
 
 @Composable
-fun LoginPage() {
+fun RegisterPage() {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.primaryContainer)
@@ -58,19 +59,22 @@ fun LoginPage() {
                 .padding(24.dp)
         ) {
             Spacer(modifier = Modifier.height(32.dp))
-            LoginUsernameField()
-            Spacer(modifier = Modifier.height(16.dp))
-            LoginPasswordTextField()
-            Row( modifier = Modifier.align(Alignment.End) ) { ForgotPasswordButton() }
-            Spacer(modifier = Modifier.height(64.dp))
-            LoginSubmitButton()
-            SignUpNowButton()
+            RegisterUsernameField()
+            Spacer(modifier = Modifier.height(12.dp))
+            RegisterEmailField()
+            Spacer(modifier = Modifier.height(12.dp))
+            RegisterPasswordTextField()
+            Spacer(modifier = Modifier.height(12.dp))
+            RegisterConfirmPasswordTextField()
+            Spacer(modifier = Modifier.height(32.dp))
+            RegisterSubmitButton()
+            LoginNowButton()
         }
     }
 }
 
 @Composable
-fun LoginUsernameField() {
+fun RegisterUsernameField() {
     var text by remember { mutableStateOf("") }
 
     TextField(
@@ -88,7 +92,25 @@ fun LoginUsernameField() {
 }
 
 @Composable
-fun LoginPasswordTextField() {
+fun RegisterEmailField() {
+    var text by remember { mutableStateOf("") }
+
+    TextField(
+        value = text,
+        onValueChange = { text = it },
+        placeholder = { Text("Enter email") },
+        label = { Text("Email") },
+        modifier = Modifier.fillMaxWidth(),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White
+        )
+    )
+}
+
+@Composable
+fun RegisterPasswordTextField() {
     var password by remember { mutableStateOf("") }
 
     TextField(
@@ -109,19 +131,28 @@ fun LoginPasswordTextField() {
 }
 
 @Composable
-fun ForgotPasswordButton() {
-    TextButton(
-        onClick = { /*TODO*/ },
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = MaterialTheme.colorScheme.secondary
+fun RegisterConfirmPasswordTextField() {
+    var password by remember { mutableStateOf("") }
+
+    TextField(
+        value = password,
+        onValueChange = {
+            password = it
+        },
+        placeholder = { Text(text = "Re-enter your password") },
+        label = { Text(text = "Confirm Password") },
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password ),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White
         ),
-    ) {
-        Text(text = "Forgot Password?")
-    }
+        visualTransformation = PasswordVisualTransformation()
+    )
 }
 
 @Composable
-fun LoginSubmitButton() {
+fun RegisterSubmitButton() {
     Button(
         onClick = { /*TODO*/ },
         modifier = Modifier.fillMaxWidth(),
@@ -130,12 +161,12 @@ fun LoginSubmitButton() {
             contentColor = MaterialTheme.colorScheme.onSecondary
         )
     ) {
-        Text(text = "Login")
+        Text(text = "Register")
     }
 }
 
 @Composable
-fun SignUpNowButton() {
+fun LoginNowButton() {
     TextButton(
         onClick = { /*TODO*/ },
         modifier = Modifier.fillMaxWidth(),
@@ -143,6 +174,6 @@ fun SignUpNowButton() {
             contentColor = MaterialTheme.colorScheme.secondary
         )
     ) {
-        Text(text = "Not a member yet? Sign up now.")
+        Text(text = "Already have an account? Login now.")
     }
 }
