@@ -3,6 +3,8 @@ package dev.kotl.malayah
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import dev.kotl.malayah.ui.LandingPage
+import dev.kotl.malayah.ui.LoginPage
 import dev.kotl.malayah.ui.theme.AppTheme
 
 /*
@@ -15,7 +17,7 @@ class MainActivity : ComponentActivity() {
             AppTheme(
                 darkTheme = false
             ) {
-                LandingPage()
+                LoginPage()
             }
         }
     }
