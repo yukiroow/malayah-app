@@ -3,7 +3,6 @@ package dev.kotl.malayah.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -25,10 +23,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,6 +32,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.kotl.malayah.R
+import dev.kotl.malayah.Routes
 
 @Composable
 fun RegisterPage(navController: NavController) {
@@ -44,6 +41,7 @@ fun RegisterPage(navController: NavController) {
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(18.dp)
     ) {
+        var username by remember { mutableStateOf("") }
         Spacer(modifier = Modifier.height(32.dp))
         Image(
             painter = painterResource(id = R.drawable.home_banner),
@@ -61,7 +59,9 @@ fun RegisterPage(navController: NavController) {
                 .padding(24.dp)
         ) {
             Spacer(modifier = Modifier.height(32.dp))
-            RegisterUsernameField()
+            RegisterUsernameField(username, onUsernameChange = { newUsername ->
+                username = newUsername
+            })
             Spacer(modifier = Modifier.height(12.dp))
             RegisterEmailField()
             Spacer(modifier = Modifier.height(12.dp))
@@ -69,19 +69,17 @@ fun RegisterPage(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
             RegisterConfirmPasswordTextField()
             Spacer(modifier = Modifier.height(32.dp))
-            RegisterSubmitButton(navController)
+            RegisterSubmitButton(navController, username)
             LoginNowButton(navController)
         }
     }
 }
 
 @Composable
-fun RegisterUsernameField() {
-    var text by remember { mutableStateOf("") }
-
+fun RegisterUsernameField(username: String, onUsernameChange: (String) -> Unit) {
     TextField(
-        value = text,
-        onValueChange = { text = it },
+        value = username,
+        onValueChange = onUsernameChange,
         placeholder = { Text("Enter username") },
         label = { Text("Username") },
         modifier = Modifier.fillMaxWidth(),
@@ -154,9 +152,11 @@ fun RegisterConfirmPasswordTextField() {
 }
 
 @Composable
-fun RegisterSubmitButton(navController: NavController) {
+fun RegisterSubmitButton(navController: NavController, username: String) {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = {
+            navController.navigate("chat/${username}")
+        },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.secondary,

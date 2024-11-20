@@ -23,12 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.kotl.malayah.R
+import dev.kotl.malayah.Routes
 
-sealed class Routes(val route: String) {
-    object Landing : Routes("landing")
-    object Login : Routes("login")
-    object Register : Routes("register")
-}
 
 @Composable
 fun LandingPage(navController: NavController) {

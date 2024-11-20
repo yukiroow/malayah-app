@@ -1,5 +1,6 @@
 package dev.kotl.malayah.ui
 
+import android.net.Credentials
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import dev.kotl.malayah.LoggedUser
 import dev.kotl.malayah.R
+import dev.kotl.malayah.Routes
 
 @Composable
 fun LoginPage(navController: NavController) {
@@ -42,6 +45,7 @@ fun LoginPage(navController: NavController) {
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(18.dp)
     ) {
+        var credentials by remember { mutableStateOf(LoginCredentials()) }
         Spacer(modifier = Modifier.height(32.dp))
         Image(
             painter = painterResource(id = R.drawable.home_banner),
@@ -59,24 +63,26 @@ fun LoginPage(navController: NavController) {
                 .padding(24.dp)
         ) {
             Spacer(modifier = Modifier.height(32.dp))
-            LoginUsernameField()
+            LoginUsernameField(credentials) { newUsername ->
+                credentials = credentials.copy(username = newUsername)
+            }
             Spacer(modifier = Modifier.height(16.dp))
-            LoginPasswordTextField()
-            Row( modifier = Modifier.align(Alignment.End) ) { ForgotPasswordButton() }
+            LoginPasswordTextField(credentials) { newPassword ->
+                credentials = credentials.copy(password = newPassword)
+            }
+            Row(modifier = Modifier.align(Alignment.End)) { ForgotPasswordButton() }
             Spacer(modifier = Modifier.height(64.dp))
-            LoginSubmitButton(navController)
+            LoginSubmitButton(navController, credentials)
             SignUpNowButton(navController)
         }
     }
 }
 
 @Composable
-fun LoginUsernameField() {
-    var text by remember { mutableStateOf("") }
-
+fun LoginUsernameField(credentials: LoginCredentials, onUsernameChange: (String) -> Unit) {
     TextField(
-        value = text,
-        onValueChange = { text = it },
+        value = credentials.username,
+        onValueChange = onUsernameChange,
         placeholder = { Text("Enter username") },
         label = { Text("Username") },
         modifier = Modifier.fillMaxWidth(),
@@ -89,18 +95,14 @@ fun LoginUsernameField() {
 }
 
 @Composable
-fun LoginPasswordTextField() {
-    var password by remember { mutableStateOf("") }
-
+fun LoginPasswordTextField(credentials: LoginCredentials, onPasswordChange: (String) -> Unit) {
     TextField(
-        value = password,
-        onValueChange = {
-            password = it
-        },
+        value = credentials.password,
+        onValueChange = onPasswordChange,
         placeholder = { Text(text = "Enter password") },
         label = { Text(text = "Password") },
         modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.background,
             unfocusedContainerColor = MaterialTheme.colorScheme.background
@@ -116,15 +118,38 @@ fun ForgotPasswordButton() {
         colors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.secondary
         ),
+        enabled = false
     ) {
         Text(text = "Forgot Password?")
     }
 }
 
 @Composable
-fun LoginSubmitButton(navController: NavController) {
+fun LoginSubmitButton(
+    navController: NavController,
+    credentials: LoginCredentials
+) {
+    var showError by remember { mutableStateOf(false) }
+    if (showError) {
+        Text(
+            text = "Invalid credentials, please try again.",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(
+                top = 8.dp,
+                bottom = 8.dp
+            )
+        )
+    }
     Button(
-        onClick = { /*TODO*/ },
+        onClick = {
+            if (!validateCredentials(credentials)) {
+                showError = true
+            } else {
+                showError = false
+                navController.navigate("chat/${credentials.username}")
+            }
+        },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.secondary,
@@ -145,5 +170,23 @@ fun SignUpNowButton(navController: NavController) {
         )
     ) {
         Text(text = "Not a member yet? Sign up now.")
+    }
+}
+
+fun validateCredentials(credentials: LoginCredentials): Boolean {
+    if (credentials.isEmpty())
+        return false
+    return credentials.username.trim().equals(
+        "yukiro",
+        ignoreCase = true
+    ) && credentials.password.equals("123qweasd")
+}
+
+data class LoginCredentials(
+    var username: String = "",
+    var password: String = ""
+) {
+    fun isEmpty(): Boolean {
+        return username.isEmpty() && password.isEmpty()
     }
 }
