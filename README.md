@@ -36,5 +36,5 @@
 <!-- MARKDOWN LINKS & IMAGES -->
 [Kotlin.icon]: https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white
 [Kotlin-url]: https://kotlinlang.org/
-[Compose.icon]: https://img.shields.io/badge/JetpackCompose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white
+[Compose.icon]: https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white
 [Compose-url]: https://developer.android.com/compose
