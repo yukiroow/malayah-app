@@ -79,7 +79,7 @@ fun RegisterPage(navController: NavController) {
             RegisterConfirmPasswordTextField(confirmPassword, onConfirmPasswordChange = { newConfirmPassword ->
                 confirmPassword = newConfirmPassword
             })
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             RegisterSubmitButton(navController, username, password, email, confirmPassword)
             LoginNowButton(navController)
         }
