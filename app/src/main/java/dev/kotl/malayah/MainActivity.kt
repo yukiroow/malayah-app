@@ -3,6 +3,8 @@ package dev.kotl.malayah
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import dev.kotl.malayah.ui.ChatViewModel
 import dev.kotl.malayah.ui.theme.AppTheme
 
 /*
@@ -15,8 +17,9 @@ class MainActivity : ComponentActivity() {
             AppTheme(
                 darkTheme = false
             ) {
+                val viewModel: ChatViewModel by viewModels()
                 users = Users()
-                AppController()
+                AppController(viewModel)
             }
         }
     }

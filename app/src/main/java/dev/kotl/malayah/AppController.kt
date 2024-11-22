@@ -1,12 +1,15 @@
 package dev.kotl.malayah
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dev.kotl.malayah.ui.ChatAppProper
+import dev.kotl.malayah.ui.ChatUiModel
+import dev.kotl.malayah.ui.ChatViewModel
 import dev.kotl.malayah.ui.LandingPage
 import dev.kotl.malayah.ui.LoginPage
 import dev.kotl.malayah.ui.RegisterPage
@@ -54,7 +57,7 @@ class User(
 )
 
 @Composable
-fun AppController() {
+fun AppController(viewModel: ChatViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Routes.Landing.route) {
         composable(Routes.Landing.route) {
@@ -71,7 +74,17 @@ fun AppController() {
             arguments = listOf(navArgument("username") { type = NavType.StringType })
         ) { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username")
-            ChatAppProper(navController, username!!)
+            val conversation = viewModel.conversation.collectAsState()
+            ChatAppProper(
+                navController,
+                username!!,
+                ChatUiModel(
+                    messages = conversation.value,
+                    addressee = "MalayahBot"
+                ),
+                onSend = { msg -> viewModel.send(ChatUiModel.Message(msg, username)) },
+                clear = { viewModel.clear() }
+            )
         }
     }
 }
