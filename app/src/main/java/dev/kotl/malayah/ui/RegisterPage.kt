@@ -36,8 +36,6 @@ import dev.kotl.malayah.R
 import dev.kotl.malayah.Routes
 import dev.kotl.malayah.User
 import dev.kotl.malayah.users
-import kotlinx.coroutines.launch
-import org.bson.types.ObjectId
 
 @Composable
 fun RegisterPage(navController: NavController) {
@@ -170,7 +168,6 @@ fun RegisterSubmitButton(
 ) {
     var errorMessage by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
     if (showError) {
         Text(
             text = errorMessage,
@@ -193,18 +190,25 @@ fun RegisterSubmitButton(
                 errorMessage = "Passwords do not match."
                 showError = true
             } else {
+                users.register(
+                    User(username = username, password = password, email = email),
+                    onSuccess = { response ->
+                        run {
+                            if(response.message == "success") {
+                                showError = false
+                                navController.navigate("login")
+                            }
+                        }
+                    },
+                    onFailure = {
+                        run {
+                            errorMessage = "Please try again"
+                            showError = true
+                        }
+                    }
+                )
                 showError = false
-                coroutineScope.launch {
-                    users.register(
-                        User(
-                            id = ObjectId(),
-                            username = username,
-                            password = password,
-                            email = email
-                        )
-                    )
-                    navController.navigate("login")
-                }
+                navController.navigate("login")
             }
         },
         modifier = Modifier.fillMaxWidth(),
