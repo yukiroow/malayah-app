@@ -131,10 +131,11 @@ fun LoginSubmitButton(
     credentials: LoginCredentials
 ) {
     var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     if (showError) {
         Text(
-            text = "Invalid credentials, please try again.",
+            text = errorMessage,
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(
@@ -145,12 +146,26 @@ fun LoginSubmitButton(
     }
     Button(
         onClick = {
-            if (!validateCredentials(credentials)) {
+            if (credentials.isEmpty()) {
+                errorMessage = "Please fill in all the fields"
                 showError = true
-            } else {
-                showError = false
-                navController.navigate("chat/${credentials.username}")
             }
+            users.validate(credentials.username, credentials.password,
+                onSuccess = { response ->
+                    run {
+                        if(response.message == "success") {
+                            showError = false
+                            navController.navigate("chat/${credentials.username}")
+                        }
+                    }
+                },
+                onFailure = {
+                    run {
+                        errorMessage = "Please try again"
+                        showError = true
+                    }
+                }
+            )
         },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
@@ -173,21 +188,6 @@ fun SignUpNowButton(navController: NavController) {
     ) {
         Text(text = "Not a member yet? Sign up now.")
     }
-}
-
-fun validateCredentials(credentials: LoginCredentials): Boolean {
-    var success = false
-    if (credentials.isEmpty())
-        return false
-    users.validate(credentials.username, credentials.password,
-        onSuccess = { response ->
-            success = response.message == "success"
-        },
-        onFailure = {
-            success = false
-        }
-    )
-    return success
 }
 
 data class LoginCredentials(
