@@ -192,23 +192,28 @@ fun RegisterSubmitButton(
             } else {
                 users.register(
                     User(username = username, password = password, email = email),
-                    onSuccess = { response ->
+                    onSuccess = { _, code ->
                         run {
-                            if(response.message == "success") {
+                            if(code == 200) {
+                                // TODO: Error Handling
+                                println(code)
                                 showError = false
                                 navController.navigate("login")
+                            } else {
+                                println(code)
+                                errorMessage = "Please try again"
+                                showError = true
                             }
                         }
                     },
-                    onFailure = {
+                    onFailure = { err ->
                         run {
+                            println(err)
                             errorMessage = "Please try again"
                             showError = true
                         }
                     }
                 )
-                showError = false
-                navController.navigate("login")
             }
         },
         modifier = Modifier.fillMaxWidth(),

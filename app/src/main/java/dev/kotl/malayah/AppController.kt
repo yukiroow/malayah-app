@@ -70,13 +70,13 @@ class Users {
             .create(ApiService::class.java)
     }
 
-    fun register(user: User, onSuccess: (UserResponse) -> Unit, onFailure: (String) -> Unit) {
+    fun register(user: User, onSuccess: (UserResponse, Int) -> Unit, onFailure: (String) -> Unit) {
         api.registerUser(user).enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 val responseBody = response.body()
                 if (response.isSuccessful) {
                     if (responseBody != null) {
-                        onSuccess(responseBody)
+                        onSuccess(responseBody, response.code())
                     } else {
                         onFailure("No response from server")
                     }
