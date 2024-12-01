@@ -142,14 +142,10 @@ fun AppController(viewModel: ChatViewModel) {
             arguments = listOf(navArgument("username") { type = NavType.StringType })
         ) { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username")
-            val conversation = viewModel.conversation.collectAsState()
             ChatAppProper(
                 navController,
                 username!!,
-                ChatUiModel(
-                    messages = conversation.value,
-                    addressee = "MalayahBot"
-                ),
+                viewModel,
                 onSend = { msg -> viewModel.send(ChatUiModel.Message(msg, username)) },
                 clear = { viewModel.clear() }
             )

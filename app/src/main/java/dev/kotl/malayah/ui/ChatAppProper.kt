@@ -34,6 +34,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
 import dev.kotl.malayah.R
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,10 +64,11 @@ import kotlinx.coroutines.launch
 fun ChatAppProper(
     navController: NavController,
     user: String,
-    model: ChatUiModel,
+    viewModel: ChatViewModel,
     onSend: (String) -> Unit,
     clear: () -> Unit,
 ) {
+    val model = viewModel.conversation.collectAsState().value
     var logoutIsOpen by remember { mutableStateOf(false) }
 
     if (logoutIsOpen) {
@@ -114,8 +117,8 @@ fun ChatAppProper(
 
             val listState = rememberLazyListState()
 
-            LaunchedEffect(model.messages.size) {
-                listState.animateScrollToItem(model.messages.size)
+            LaunchedEffect(model.size) {
+                listState.animateScrollToItem(model.size)
             }
             LazyColumn(
                 state = listState,
@@ -130,7 +133,7 @@ fun ChatAppProper(
                     },
                 contentPadding = PaddingValues(16.dp)
             ) {
-                items(model.messages) { item ->
+                items(model) { item ->
                     ChatBubble(item, user)
                 }
             }
@@ -303,24 +306,41 @@ fun LogoutDialog(
 }
 
 class ChatViewModel : ViewModel() {
-    val config = generationConfig { temperature = 0.7f }
+    val config = generationConfig {
+        temperature = 0.7f
+        responseMimeType = "text/plain"
+
+    }
     val generativeModel = GenerativeModel(
-            modelName = "gemini-1.5-flash-latest",
-            apiKey = "",
-            generationConfig = config
-        )
+        modelName = "gemini-1.5-flash-latest",
+        apiKey = "",
+        generationConfig = config,
+        systemInstruction = content { text("You are a chatbot for conversing with emotions. Your name is Malayah Bot. Keep your responses brief but helpful, don't send lists upon lists of information.") }
+    )
     private val chat = generativeModel.startChat(
         history = listOf()
     )
     val conversation: StateFlow<List<ChatUiModel.Message>>
         get() = _conversation
     private val _conversation = MutableStateFlow(
-        listOf(ChatUiModel.Message("Greetings. I'm Malayah Bot!", "MalayahBot"))
+        listOf(
+            ChatUiModel.Message(
+                "This chatbot is designed to assist with information but may occasionally provide inaccurate or inappropriate responses. While it strives for accuracy, it is not perfect and can generate unintended or harmful content. If you encounter any harmful messages, please contact Google Gemini Support immediately for assistance. Use caution and verify critical information from trusted sources.",
+                "MalayahBot"
+            ),
+            ChatUiModel.Message("Greetings. I'm Malayah Bot!", "MalayahBot")
+        )
     )
 
     fun clear() {
         viewModelScope.launch {
-            _conversation.emit(listOf())
+            _conversation.emit(listOf(
+                ChatUiModel.Message(
+                    "This chatbot is designed to assist with information but may occasionally provide inaccurate or inappropriate responses. While it strives for accuracy, it is not perfect and can generate unintended or harmful content. If you encounter any harmful messages, please contact Google Gemini Support immediately for assistance. Use caution and verify critical information from trusted sources.",
+                    "MalayahBot"
+                ),
+                ChatUiModel.Message("Greetings. I'm Malayah Bot!", "MalayahBot")
+            ))
         }
     }
 
