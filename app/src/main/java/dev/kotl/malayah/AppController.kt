@@ -13,9 +13,40 @@ import dev.kotl.malayah.ui.ChatViewModel
 import dev.kotl.malayah.ui.LandingPage
 import dev.kotl.malayah.ui.LoginPage
 import dev.kotl.malayah.ui.RegisterPage
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.converter.gson.GsonConverterFactory
 
 lateinit var users: Users
+
+interface ApiService {
+    @POST("api/register")
+    fun registerUser(@Body user: User): Call<UserResponse>
+
+    @POST("api/login")
+    fun loginUser(@Body credentials: LoginCredentials): Call<LoginResponse>
+}
+
+data class UserResponse(
+    val success: Boolean,
+    val message: String
+)
+
+data class LoginResponse(
+    val success: Boolean,
+    val token: String? = null,  // Example response data
+    val message: String
+)
+
+data class LoginCredentials(
+    val username: String,
+    val password: String
+)
+
 
 sealed class Routes(val route: String) {
     object Landing : Routes("landing")
@@ -24,29 +55,60 @@ sealed class Routes(val route: String) {
 }
 
 class Users {
-    val loggedUsers: MutableList<User> = mutableListOf()
 
-    init {
-        loggedUsers.add(
-            User("yukiro", "123qweasd", "yukiro@mail.co")
-        )
+    private val api: ApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://malayah-api.onrender.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
     }
 
-    fun register(user: User) {
-        println("""
-            New User Added!
-            Username: ${user.username}
-            Email: ${user.email}
-        """.trimIndent())
-        loggedUsers.add(user)
+    fun register(user: User, onSuccess: (UserResponse) -> Unit, onFailure: (String) -> Unit) {
+        api.registerUser(user).enqueue(object : Callback<UserResponse> {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                val responseBody = response.body()
+                if (response.isSuccessful) {
+                    if (responseBody != null) {
+                        onSuccess(responseBody)
+                    } else {
+                        onFailure("No response from server")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                onFailure("Network error: ${t.message}")
+            }
+        })
     }
 
-    fun validate(username: String, password: String): Boolean {
-        println("""
-            New User Login!
-            Username: $username
-        """.trimIndent())
-        return loggedUsers.any { it.username == username && it.password == password }
+    fun validate(
+        username: String,
+        password: String,
+        onSuccess: (LoginResponse) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val credentials = LoginCredentials(username, password)
+
+        api.loginUser(credentials).enqueue(object : Callback<LoginResponse> {
+            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        onSuccess(responseBody)
+                    } else {
+                        onFailure("No response from server")
+                    }
+                } else {
+                    onFailure("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                onFailure("Network error: ${t.message}")
+            }
+        })
     }
 }
 

@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import androidx.navigation.NavController
 import dev.kotl.malayah.R
 import dev.kotl.malayah.Routes
 import dev.kotl.malayah.users
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPage(navController: NavController) {
@@ -129,6 +131,7 @@ fun LoginSubmitButton(
     credentials: LoginCredentials
 ) {
     var showError by remember { mutableStateOf(false) }
+
     if (showError) {
         Text(
             text = "Invalid credentials, please try again.",
@@ -173,9 +176,18 @@ fun SignUpNowButton(navController: NavController) {
 }
 
 fun validateCredentials(credentials: LoginCredentials): Boolean {
+    var success = false
     if (credentials.isEmpty())
         return false
-    return users.validate(credentials.username, credentials.password)
+    users.validate(credentials.username, credentials.password,
+        onSuccess = { response ->
+            success = response.message == "success"
+        },
+        onFailure = {
+            success = false
+        }
+    )
+    return success
 }
 
 data class LoginCredentials(

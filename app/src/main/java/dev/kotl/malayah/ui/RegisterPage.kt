@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +36,8 @@ import dev.kotl.malayah.R
 import dev.kotl.malayah.Routes
 import dev.kotl.malayah.User
 import dev.kotl.malayah.users
+import kotlinx.coroutines.launch
+import org.bson.types.ObjectId
 
 @Composable
 fun RegisterPage(navController: NavController) {
@@ -76,9 +79,11 @@ fun RegisterPage(navController: NavController) {
                 password = newPassword
             })
             Spacer(modifier = Modifier.height(12.dp))
-            RegisterConfirmPasswordTextField(confirmPassword, onConfirmPasswordChange = { newConfirmPassword ->
-                confirmPassword = newConfirmPassword
-            })
+            RegisterConfirmPasswordTextField(
+                confirmPassword,
+                onConfirmPasswordChange = { newConfirmPassword ->
+                    confirmPassword = newConfirmPassword
+                })
             Spacer(modifier = Modifier.height(12.dp))
             RegisterSubmitButton(navController, username, password, email, confirmPassword)
             LoginNowButton(navController)
@@ -136,7 +141,10 @@ fun RegisterPasswordTextField(password: String, onPasswordChange: (String) -> Un
 }
 
 @Composable
-fun RegisterConfirmPasswordTextField(confirmPassword: String, onConfirmPasswordChange: (String) -> Unit) {
+fun RegisterConfirmPasswordTextField(
+    confirmPassword: String,
+    onConfirmPasswordChange: (String) -> Unit
+) {
     TextField(
         value = confirmPassword,
         onValueChange = onConfirmPasswordChange,
@@ -162,6 +170,7 @@ fun RegisterSubmitButton(
 ) {
     var errorMessage by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
     if (showError) {
         Text(
             text = errorMessage,
@@ -173,9 +182,11 @@ fun RegisterSubmitButton(
             )
         )
     }
+
+
     Button(
         onClick = {
-            if(username.isEmpty() || password.isEmpty() || email.isEmpty() || confirmPassword.isEmpty()) {
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || confirmPassword.isEmpty()) {
                 errorMessage = "Please complete all the fields."
                 showError = true
             } else if (password != confirmPassword) {
@@ -183,14 +194,17 @@ fun RegisterSubmitButton(
                 showError = true
             } else {
                 showError = false
-                users.register(
-                    User(
-                        username = username,
-                        password = password,
-                        email = email
+                coroutineScope.launch {
+                    users.register(
+                        User(
+                            id = ObjectId(),
+                            username = username,
+                            password = password,
+                            email = email
+                        )
                     )
-                )
-                navController.navigate("login")
+                    navController.navigate("login")
+                }
             }
         },
         modifier = Modifier.fillMaxWidth(),

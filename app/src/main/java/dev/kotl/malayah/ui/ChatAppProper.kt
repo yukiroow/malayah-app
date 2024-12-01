@@ -306,7 +306,7 @@ class ChatViewModel : ViewModel() {
     val config = generationConfig { temperature = 0.7f }
     val generativeModel = GenerativeModel(
             modelName = "gemini-1.5-flash-latest",
-            apiKey = "",
+            apiKey = "AIzaSyCIcr2dPkfuXtwFJfCRD4iNL3GTlYG0YWE",
             generationConfig = config
         )
     private val chat = generativeModel.startChat(
