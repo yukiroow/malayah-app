@@ -66,21 +66,29 @@ fun RegisterPage(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(32.dp))
             RegisterUsernameField(username, onUsernameChange = { newUsername ->
-                username = newUsername
+                if(newUsername.length <= 15) {
+                    username = newUsername.replace(Regex("\\s"), "")
+                }
             })
             Spacer(modifier = Modifier.height(12.dp))
             RegisterEmailField(email, onEmailChange = { newEmail ->
-                email = newEmail
+                if(newEmail.length <= 30) {
+                    email = newEmail.replace(Regex("\\s"), "")
+                }
             })
             Spacer(modifier = Modifier.height(12.dp))
             RegisterPasswordTextField(password, onPasswordChange = { newPassword ->
-                password = newPassword
+                if(newPassword.length <= 20) {
+                    password = newPassword.replace(Regex("\\s"), "")
+                }
             })
             Spacer(modifier = Modifier.height(12.dp))
             RegisterConfirmPasswordTextField(
                 confirmPassword,
                 onConfirmPasswordChange = { newConfirmPassword ->
-                    confirmPassword = newConfirmPassword
+                    if(newConfirmPassword.length <= 20) {
+                        confirmPassword = newConfirmPassword.replace(Regex("\\s"), "")
+                    }
                 })
             Spacer(modifier = Modifier.height(12.dp))
             RegisterSubmitButton(navController, username, password, email, confirmPassword)
@@ -183,24 +191,33 @@ fun RegisterSubmitButton(
 
     Button(
         onClick = {
+            var success = false;
             if (username.isEmpty() || password.isEmpty() || email.isEmpty() || confirmPassword.isEmpty()) {
                 errorMessage = "Please complete all the fields."
                 showError = true
             } else if (password != confirmPassword) {
                 errorMessage = "Passwords do not match."
                 showError = true
+            } else if (username.length < 4) {
+                errorMessage = "Username must be at least 4 characters"
+                showError = true
+            } else if (!Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$").matches(email)) {
+                errorMessage = "Please enter a valid email address"
+                showError = true
+            } else if (password.length < 8) {
+                errorMessage = "Password must be at least 8 characters"
+                showError = true
             } else {
                 users.register(
                     User(username = username, password = password, email = email),
                     onSuccess = { _, code ->
                         run {
-                            if(code == 200) {
-                                // TODO: Error Handling
-                                println(code)
+                            if (code == 200) {
+                                success = true
                                 showError = false
                                 navController.navigate("login")
                             } else {
-                                println(code)
+                                success = true
                                 errorMessage = "Please try again"
                                 showError = true
                             }
@@ -208,12 +225,16 @@ fun RegisterSubmitButton(
                     },
                     onFailure = { err ->
                         run {
-                            println(err)
+                            success = false
                             errorMessage = "Please try again"
                             showError = true
                         }
                     }
                 )
+                if (!success) {
+                    errorMessage = "Please try again"
+                    showError = true
+                }
             }
         },
         modifier = Modifier.fillMaxWidth(),

@@ -313,7 +313,7 @@ class ChatViewModel : ViewModel() {
     }
     val generativeModel = GenerativeModel(
         modelName = "gemini-1.5-flash-latest",
-        apiKey = "",
+        apiKey = "AIzaSyCIcr2dPkfuXtwFJfCRD4iNL3GTlYG0YWE",
         generationConfig = config,
         systemInstruction = content { text("You are a chatbot for conversing with emotions. Your name is Malayah Bot. Keep your responses brief but helpful, don't send lists upon lists of information.") }
     )
