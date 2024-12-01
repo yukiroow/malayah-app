@@ -65,11 +65,15 @@ fun LoginPage(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(32.dp))
             LoginUsernameField(credentials) { newUsername ->
-                credentials = credentials.copy(username = newUsername)
+                if(newUsername.length <= 15) {
+                    credentials = credentials.copy(username = newUsername.replace(Regex("\\s"), ""))
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             LoginPasswordTextField(credentials) { newPassword ->
-                credentials = credentials.copy(password = newPassword)
+                if(newPassword.length <= 20) {
+                    credentials = credentials.copy(password = newPassword.replace(Regex("\\s"), ""))
+                }
             }
             Row(modifier = Modifier.align(Alignment.End)) { ForgotPasswordButton() }
             Spacer(modifier = Modifier.height(64.dp))

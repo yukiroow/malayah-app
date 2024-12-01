@@ -1,5 +1,6 @@
 package dev.kotl.malayah
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavType
@@ -127,6 +128,7 @@ class User(
 @Composable
 fun AppController(viewModel: ChatViewModel) {
     val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination = Routes.Landing.route) {
         composable(Routes.Landing.route) {
             LandingPage(navController)
