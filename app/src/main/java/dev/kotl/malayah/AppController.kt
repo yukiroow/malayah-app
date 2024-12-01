@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.gson.GsonBuilder
 import dev.kotl.malayah.ui.ChatAppProper
 import dev.kotl.malayah.ui.ChatUiModel
 import dev.kotl.malayah.ui.ChatViewModel
@@ -33,12 +34,13 @@ interface ApiService {
 
 data class UserResponse(
     val success: Boolean,
+    val status: String,
     val message: String
 )
 
 data class LoginResponse(
     val success: Boolean,
-    val token: String? = null,  // Example response data
+    val status: String,
     val message: String
 )
 
@@ -57,9 +59,13 @@ sealed class Routes(val route: String) {
 class Users {
 
     private val api: ApiService by lazy {
+        val gson = GsonBuilder()
+            .setLenient()
+            .create()
+
         Retrofit.Builder()
             .baseUrl("https://malayah-api.onrender.com")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(ApiService::class.java)
     }

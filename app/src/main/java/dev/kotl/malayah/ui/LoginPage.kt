@@ -153,14 +153,15 @@ fun LoginSubmitButton(
             users.validate(credentials.username, credentials.password,
                 onSuccess = { response ->
                     run {
-                        if(response.message == "success") {
+                        if(response.status == "success") {
                             showError = false
                             navController.navigate("chat/${credentials.username}")
                         }
                     }
                 },
-                onFailure = {
+                onFailure = { err ->
                     run {
+                        println(err)
                         errorMessage = "Please try again"
                         showError = true
                     }
