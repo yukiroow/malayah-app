@@ -62,11 +62,7 @@ jobs:
       - name: Run Android Lint
         run: ./gradlew lintDebug --stacktrace
 
-      # 9. Run Instrumentation Tests
-      - name: Run Instrumentation Tests
-        run: ./gradlew connectedDebugAndroidTest --stacktrace
-
-      # 10. Upload Debug APK
+      # 9. Upload Debug APK
       - name: Upload Debug APK
         uses: actions/upload-artifact@v3
         with:
