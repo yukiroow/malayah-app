@@ -287,7 +287,7 @@ fun LogoutDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-               //     onConfirmation()
+                    onConfirmation()
                 }
             ) {
                 Text("Confirm")
