@@ -29,9 +29,9 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
         with:
-          api-level: 33
-          build-tools: '33.0.2'
-          target: 'android-33'
+          api-level: 35
+          build-tools: '35.0.0'
+          target: 'android-35'
 
       # 4. Grant execute permissions to Gradle wrapper
       - name: Grant execute permission for Gradle wrapper
@@ -48,19 +48,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 6. Run Android Lint
-      - name: Run Android Lint
-        run: ./gradlew lintDebug
+      # 6. Debug: Verify Gradle and Kotlin versions
+      - name: Verify Gradle and Kotlin setup
+        run: |
+          ./gradlew --version
+          java -version
 
-      # 7. Run Instrumentation Tests
-      - name: Run Instrumentation Tests
-        run: ./gradlew connectedDebugAndroidTest
-
-      # 8. Build Debug APK
+      # 7. Build Debug APK with detailed logging
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
-      
-      # 9. Upload APK
+        run: ./gradlew assembleDebug --stacktrace --info
+
+      # 8. Run Android Lint
+      - name: Run Android Lint
+        run: ./gradlew lintDebug --stacktrace
+
+      # 9. Run Instrumentation Tests
+      - name: Run Instrumentation Tests
+        run: ./gradlew connectedDebugAndroidTest --stacktrace
+
+      # 10. Upload Debug APK
       - name: Upload Debug APK
         uses: actions/upload-artifact@v3
         with:
