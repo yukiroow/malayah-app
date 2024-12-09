@@ -1,0 +1,63 @@
+name: Malayah App CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  android-ci:
+    name: Android CI/CD Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up JDK and Android SDK
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
+          build-tools: '33.0.2'
+          target: 'android-33'
+
+      # 3. Cache Gradle dependencies
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 4. Run Android Lint
+      - name: Run Android Lint
+        run: ./gradlew lintDebug
+
+      # 5. Run Instrumentation Tests
+      - name: Run Instrumentation Tests
+        run: ./gradlew connectedDebugAndroidTest
+
+      # 6. Build Debug APK
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+      
+      # 7. Upload APK
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
