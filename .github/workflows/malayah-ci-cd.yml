@@ -61,17 +61,3 @@ jobs:
       # 8. Run Android Lint
       - name: Run Android Lint
         run: ./gradlew lintDebug
-
-      # 9. Upload Lint Test Report
-      - name: Upload html test report
-        uses: actions/upload-artifact@v3
-        with:
-          name: lint.html
-          path: app/build/reports/lint-results-debug.html
-
-      # 10. Upload Debug APK
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
