@@ -24,9 +24,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    @SuppressLint("MissingSuperCall")
-    override fun onBackPressed() {
-        // DO NOTHING!
-    }
 }
