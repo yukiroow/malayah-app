@@ -196,11 +196,9 @@ fun RegisterSubmitButton(
                     onSuccess = { _, code ->
                         run {
                             if (code == 200) {
-                                success = true
                                 showError = false
                                 navController.navigate("login")
                             } else {
-                                success = true
                                 errorMessage = "Please try again"
                                 showError = true
                             }
@@ -208,7 +206,6 @@ fun RegisterSubmitButton(
                     },
                     onFailure = { err ->
                         run {
-                            success = false
                             errorMessage = "Please try again"
                             showError = true
                         }
