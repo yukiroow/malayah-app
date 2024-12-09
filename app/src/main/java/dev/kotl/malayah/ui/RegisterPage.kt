@@ -191,6 +191,24 @@ fun RegisterSubmitButton(
 
     Button(
         onClick = {
+                onClick = {
+            var success = false;
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || confirmPassword.isEmpty()) {
+                errorMessage = "Please complete all the fields."
+                showError = true
+            } else if (password != confirmPassword) {
+                errorMessage = "Passwords do not match."
+                showError = true
+            } else if (username.length < 4) {
+                errorMessage = "Username must be at least 4 characters"
+                showError = true
+            } else if (!Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$").matches(email)) {
+                errorMessage = "Please enter a valid email address"
+                showError = true
+            } else if (password.length < 8) {
+                errorMessage = "Password must be at least 8 characters"
+                showError = true
+            } else {
                 users.register(
                     User(username = username, password = password, email = email),
                     onSuccess = { _, code ->
@@ -211,6 +229,13 @@ fun RegisterSubmitButton(
                         }
                     }
                 )
+                if (!success) {
+                    errorMessage = "Please try again"
+                    showError = true
+                }
+            }
+        }
+
         },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
