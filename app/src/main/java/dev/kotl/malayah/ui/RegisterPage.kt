@@ -66,19 +66,19 @@ fun RegisterPage(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(32.dp))
             RegisterUsernameField(username, onUsernameChange = { newUsername ->
-                if(newUsername.length <= 15) {
+                if (newUsername.length <= 15) {
                     username = newUsername.replace(Regex("\\s"), "")
                 }
             })
             Spacer(modifier = Modifier.height(12.dp))
             RegisterEmailField(email, onEmailChange = { newEmail ->
-                if(newEmail.length <= 30) {
+                if (newEmail.length <= 30) {
                     email = newEmail.replace(Regex("\\s"), "")
                 }
             })
             Spacer(modifier = Modifier.height(12.dp))
             RegisterPasswordTextField(password, onPasswordChange = { newPassword ->
-                if(newPassword.length <= 20) {
+                if (newPassword.length <= 20) {
                     password = newPassword.replace(Regex("\\s"), "")
                 }
             })
@@ -86,7 +86,7 @@ fun RegisterPage(navController: NavController) {
             RegisterConfirmPasswordTextField(
                 confirmPassword,
                 onConfirmPasswordChange = { newConfirmPassword ->
-                    if(newConfirmPassword.length <= 20) {
+                    if (newConfirmPassword.length <= 20) {
                         confirmPassword = newConfirmPassword.replace(Regex("\\s"), "")
                     }
                 })
@@ -191,7 +191,6 @@ fun RegisterSubmitButton(
 
     Button(
         onClick = {
-                onClick = {
             var success = false;
             if (username.isEmpty() || password.isEmpty() || email.isEmpty() || confirmPassword.isEmpty()) {
                 errorMessage = "Please complete all the fields."
@@ -234,8 +233,6 @@ fun RegisterSubmitButton(
                     showError = true
                 }
             }
-        }
-
         },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
