@@ -33,7 +33,11 @@ jobs:
           build-tools: '33.0.2'
           target: 'android-33'
 
-      # 4. Cache Gradle dependencies
+      # 4. Grant execute permissions to Gradle wrapper
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x ./gradlew
+
+      # 5. Cache Gradle dependencies
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
         with:
@@ -44,19 +48,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 5. Run Android Lint
+      # 6. Run Android Lint
       - name: Run Android Lint
         run: ./gradlew lintDebug
 
-      # 6. Run Instrumentation Tests
+      # 7. Run Instrumentation Tests
       - name: Run Instrumentation Tests
         run: ./gradlew connectedDebugAndroidTest
 
-      # 7. Build Debug APK
+      # 8. Build Debug APK
       - name: Build Debug APK
         run: ./gradlew assembleDebug
       
-      # 7. Upload APK
+      # 9. Upload APK
       - name: Upload Debug APK
         uses: actions/upload-artifact@v3
         with:
